@@ -77,7 +77,7 @@ void encode(std::string input_file, std::string output_file) {
 
     output.write(reinterpret_cast<char*>(&size), sizeof(size));
 
-    for(std::vector<huffmanNode>::size_type i=0; i<size; i++) {
+    for(std::vector<huffmanNode>::size_type i=0; i<pre.size(); i++) {
       if(pre_vector[i].getLeft() == nullptr && pre_vector[i].getRight() == nullptr) {
         char c = pre_vector[i].getData();
         output.write(&c, sizeof(c));
@@ -150,6 +150,7 @@ void decode(std::string input_file, std::string output_file) {
     priorityQueue.pop_front();
 
     huffmanNode * z = new huffmanNode();
+    z->setData(0x0);
     z->setFrequency(left->getFrequency() + right->getFrequency());
     z->setLeft(left);
     z->setRight(right);
