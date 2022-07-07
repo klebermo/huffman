@@ -14,4 +14,5 @@ huffman: huffmanNode.o huffmanTree.o main.o
 
 clean:
 	rm build/*.o
+	rm *.txt
 	rm huffman
