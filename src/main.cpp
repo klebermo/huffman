@@ -9,12 +9,12 @@
 void getCode(std::map<char,std::string> * table, huffmanNode * node, std::string code = "") {
   if(node->getLeft() == nullptr && node->getRight() == nullptr) {
     table->insert({node->getData(), code});
-    std::cout << node->getData() << ": " << code << std::endl;
-    return;
+  } else {
+    if(node->getLeft() != nullptr)
+      getCode(table, node->getLeft(), code+"0");
+    if(node->getRight() != nullptr)
+      getCode(table, node->getRight(), code+"1");
   }
-
-  if(node->getLeft() != nullptr) getCode(table, node->getLeft(), code+"0");
-  if(node->getRight() != nullptr) getCode(table, node->getRight(), code+"1");
 }
 
 std::string getSubstring(int length) {
@@ -95,10 +95,20 @@ void encode(std::string input_file, std::string output_file) {
       std::string code = encodeTable[c];
       encoded_string = encoded_string + code;
     }
-    encoded_string = encoded_string + getSubstring(encoded_string.size() % 8);
 
-    for(long unsigned int i=0; i<encoded_string.size(); i+=8) {
-      std::string sub = encoded_string.substr(i, 8);
+    for(long unsigned int i=0; i<encoded_string.size();) {
+      std::string sub;
+      if(i + 8 > encoded_string.size()) {
+        long unsigned int j = 0;
+        for(j=i; j<encoded_string.size(); j++) {
+          sub = sub + encoded_string[j];
+        }
+        i = i + j;
+      } else {
+        sub = encoded_string.substr(i, 8);
+        i = i + 8;
+      }
+
       std::bitset<8> bits(sub);
       unsigned long x = bits.to_ulong();
       unsigned char c = static_cast<unsigned char>(x);
@@ -164,7 +174,8 @@ void decode(std::string input_file, std::string output_file) {
   if(output.is_open()) {
     std::string decoded_string;
 
-    for(long unsigned int i=0; i<encoded_string.size(); i++) {
+    long unsigned int max = encoded_string.size();
+    for(long unsigned int i=0; i<max; i++) {
       for(auto it = decodeTable.begin(); it != decodeTable.end(); it++) {
         std::string code = it->second;
         std::string temp = encoded_string.substr(0, code.length());
