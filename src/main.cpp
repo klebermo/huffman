@@ -5,6 +5,7 @@
 #include <fstream>
 #include <bitset>
 #include <algorithm>
+#include <vector>
 
 void getCode(std::map<char,std::string> * table, huffmanNode * node, std::string code = "") {
   if(node->getLeft() == nullptr && node->getRight() == nullptr) {
